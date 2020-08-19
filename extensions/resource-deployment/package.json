@@ -423,8 +423,112 @@
         ],
         "providers": [
           {
-            "webPageUrl": "https://portal.azure.com/#create/Microsoft.SQLDatabase",
-            "requiredTools": [],
+            "dialog": {
+              "notebook": "./notebooks/azuredb/create-sqldb.ipynb",
+              "runNotebook": false,
+              "codeCellInsertionPosition": 4,
+              "taskName": "%azure-sqldb-deploy-dialog-title%",
+              "actionText": "%azure-sqlvm-deploy-dialog-action-text%",
+              "title": "%azure-sqldb-deploy-dialog-title%",
+              "name": "azure.sqldb.new.wizard",
+              "generateSummaryPage": false,
+              "tabs": [
+                {
+                  "title": "",
+                  "sections": [
+                    {
+                      "title": "Azure information",
+                      "fields": [
+                        {
+                          "subscriptionVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_NB_VAR_SUBSCRIPTION",
+                          "resourceGroupVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_NB_VAR_RESOURCE_GROUP_NAME",
+                          "type": "azure_account",
+                          "required": true
+                        },
+                        {
+                          "type": "azure_locations",
+                          "label": "Azure Locations",
+                          "defaultValue": "eastus",
+                          "required": true,
+                          "locationVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_LOCATION",
+                          "displayLocationVariableName": "AZURE_SQLDB_DISPLAY_LOCATION",
+                          "locations": [
+                            "eastus",
+                            "eastus2",
+                            "northcentralus",
+                            "southcentralus",
+                            "westcentralus",
+                            "westus",
+                            "canadacentral",
+                            "canadaeast",
+                            "brazilsouth",
+                            "westus",
+                            "westus2",
+                            "southeastasia",
+                            "westeurope"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "SQL Server information",
+                      "fields": [
+                        {
+                          "label": "SQL Server Name",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_NAME",
+                          "type": "text",
+                          "defaultValue": "mysqlserver-0",
+                          "required": true
+                        },
+                        {
+                          "label": "SQL Server Password",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_PASS",
+                          "type": "password",
+                          "defaultValue": "",
+                          "required": true
+                        }
+                      ]
+                    },
+                    {
+                      "title": "SQL Database information",
+                      "fields": [
+                        {
+                          "label": "Database Name",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
+                          "type": "text",
+                          "defaultValue": "",
+                          "required": true
+                        }
+                      ]
+                    },
+                    {
+                      "title": "The ip address range that you want to allow to access your server",
+                      "fields": [
+                        {
+                          "label": "Start IP Address",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_START",
+                          "type": "text",
+                          "defaultValue": "0.0.0.0",
+                          "required": true
+                        },
+                        {
+                          "label": "End IP Address",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_END",
+                          "type": "text",
+                          "defaultValue": "0.0.0.0",
+                          "required": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "requiredTools": [
+              {
+                "name": "azure-cli"
+              }
+            ],
             "when": "resource-type=single-database"
           },
           {
@@ -519,8 +623,7 @@
                           "type": "options",
                           "defaultValue": "sql2019-ws2019",
                           "required": true,
-                          "options":
-                          [
+                          "options": [
                             "SQL2008R2SP3-WS2008R2SP1",
                             "sql2008r2sp3-ws2008r2sp1-byol",
                             "sql2008r2sp3-ws2008r2sp1-byol",
@@ -563,8 +666,7 @@
                           "type": "options",
                           "defaultValue": "sqldev",
                           "required": true,
-                          "options":
-                          [
+                          "options": [
                             "enterprise",
                             "enterprisedbengineonly",
                             "enterprisedbengineonly-gen2",
