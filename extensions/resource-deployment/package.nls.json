@@ -75,5 +75,13 @@
 	"azure-sqlvm-vm-administrator-account-section-label": "Administrator account",
 	"azure-sqlvm-username-label": "Username",
 	"azure-sqlvm-password-label": "Password",
-	"azure-sqlvm-password-confirm-label": "Confirm password"
+	"azure-sqlvm-password-confirm-label": "Confirm password",
+	"azure-sqldb-display-name": "Azure SQL databases",
+	"azure-sqldb-description": "Best for new applications or existing on-premises applications that want to use the latest stable SQL Server features and that are migrated to the cloud with minimal changes.",
+	"azure-sqldb-deploy-dialog-title": "Deploy Azure SQL database",
+	"azure-sqldb-agreement-sqldb-eula": "Azure SQL DB License Terms",
+	"resource-type-display-name": "Resource Type",
+	"sql-azure-single-database-display-name": "Single Database",
+	"sql-azure-elastic-pool-display-name": "Elastic Pool",
+	"sql-azure-database-server-display-name": "Database Server"
 }
