@@ -596,7 +596,8 @@
               "pages": [
                 {
                   "title": "%azure-sqlvm-azure-account-page-label%",
-                  "sections": [
+                  "sections":
+                  [
                     {
                       "title": "",
                       "collapsible": false,
@@ -649,7 +650,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-vm-information-page-label%",
-                  "sections": [
+                  "sections":[
                     {
                       "title": "",
                       "collapsible": false,
@@ -757,7 +758,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-storage-page-lable%",
-                  "sections": [
+                  "sections":[
                     {
                       "title": "",
                       "collapsible": false,
@@ -794,7 +795,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-vm-administrator-account-page-label%",
-                  "sections": [
+                  "sections":[
                     {
                       "title": "",
                       "collapsible": false,
