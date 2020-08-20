@@ -480,7 +480,7 @@
                           "textValidationRequired": true,
                           "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
                           "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
-                          "defaultValue": "mysqlserver-0",
+                          "defaultValue": "mysqlserver",
                           "required": true
                         },
                         {
