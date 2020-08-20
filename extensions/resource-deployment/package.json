@@ -477,6 +477,9 @@
                           "label": "SQL Server Name",
                           "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_NAME",
                           "type": "text",
+                          "textValidationRequired": true,
+                          "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
+                          "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
                           "defaultValue": "mysqlserver-0",
                           "required": true
                         },
@@ -496,6 +499,9 @@
                           "label": "Database Name",
                           "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
                           "type": "text",
+                          "textValidationRequired": true,
+                          "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
+                          "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
                           "defaultValue": "",
                           "required": true
                         }
