@@ -423,7 +423,7 @@
         ],
         "providers": [
           {
-            "dialog": {
+            "notebookWizard": {
               "notebook": "./notebooks/azuredb/create-sqldb.ipynb",
               "runNotebook": false,
               "codeCellInsertionPosition": 4,
@@ -431,13 +431,14 @@
               "actionText": "%azure-sqlvm-deploy-dialog-action-text%",
               "title": "%azure-sqldb-deploy-dialog-title%",
               "name": "azure.sqldb.new.wizard",
-              "generateSummaryPage": false,
-              "tabs": [
+              "generateSummaryPage": true,
+              "pages": [
                 {
-                  "title": "",
+                  "title": "%azure-sqlvm-vm-account-page-label%",
                   "sections": [
                     {
-                      "title": "%azure-sqlvm-azure-account-page-label%",
+                      "title": "",
+                      "collapsible": false,
                       "fields": [
                         {
                           "subscriptionVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_NB_VAR_SUBSCRIPTION",
@@ -447,7 +448,7 @@
                         },
                         {
                           "type": "azure_locations",
-                          "label": "%azure-sqlvm-azure-location-label%",
+                          "label": "azure-sqlvm-azure-location-label%",
                           "defaultValue": "eastus",
                           "required": true,
                           "locationVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_LOCATION",
@@ -469,22 +470,28 @@
                           ]
                         }
                       ]
-                    },
+                    }
+                  ]
+                },
+                {
+                  "title": "%azure-sqldb-server-information-page-label%",
+                  "sections": [
                     {
-                      "title": "SQL Server information",
+                      "title": "",
+                      "collapsible": false,
                       "fields": [
                         {
-                          "label": "SQL Server Name",
+                          "label": "%azure-sqldb-server-name-label%",
                           "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_NAME",
                           "type": "text",
                           "textValidationRequired": true,
                           "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
                           "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
-                          "defaultValue": "mysqlserver",
+                          "defaultValue": "",
                           "required": true
                         },
                         {
-                          "label": "SQL Server Admin Username",
+                          "label": "%azure-sqldb-server-admin-username-label%",
                           "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_USERNAME",
                           "type": "text",
                           "textValidationRequired": true,
@@ -494,47 +501,47 @@
                           "required": true
                         },
                         {
-                          "label": "SQL Server Password",
+                          "label": "%azure-sqldb-server-admin-password-label%",
                           "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_PASS",
                           "type": "password",
                           "defaultValue": "",
                           "required": true
                         }
                       ]
+                    }
+                  ]
+                },
+                {
+                  "title": "SQL Database information",
+                  "fields": [
+                    {
+                      "label": "Database Name",
+                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
+                      "type": "text",
+                      "textValidationRequired": true,
+                      "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
+                      "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
+                      "defaultValue": "",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "title": "The ip address range that you want to allow to access your server",
+                  "fields": [
+                    {
+                      "label": "Start IP Address",
+                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_START",
+                      "type": "text",
+                      "defaultValue": "0.0.0.0",
+                      "required": true
                     },
                     {
-                      "title": "SQL Database information",
-                      "fields": [
-                        {
-                          "label": "Database Name",
-                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
-                          "type": "text",
-                          "textValidationRequired": true,
-                          "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
-                          "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
-                          "defaultValue": "",
-                          "required": true
-                        }
-                      ]
-                    },
-                    {
-                      "title": "The ip address range that you want to allow to access your server",
-                      "fields": [
-                        {
-                          "label": "Start IP Address",
-                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_START",
-                          "type": "text",
-                          "defaultValue": "0.0.0.0",
-                          "required": true
-                        },
-                        {
-                          "label": "End IP Address",
-                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_END",
-                          "type": "text",
-                          "defaultValue": "0.0.0.0",
-                          "required": true
-                        }
-                      ]
+                      "label": "End IP Address",
+                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_END",
+                      "type": "text",
+                      "defaultValue": "0.0.0.0",
+                      "required": true
                     }
                   ]
                 }
@@ -581,9 +588,8 @@
               "generateSummaryPage": true,
               "pages": [
                 {
-                  "title": ,
-                  "sections":
-                  [
+                  "title": "%azure-sqlvm-vm-account-page-label%",
+                  "sections": [
                     {
                       "title": "",
                       "collapsible": false,
@@ -636,7 +642,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-vm-information-page-label%",
-                  "sections":[
+                  "sections": [
                     {
                       "title": "",
                       "collapsible": false,
@@ -744,7 +750,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-storage-page-lable%",
-                  "sections":[
+                  "sections": [
                     {
                       "title": "",
                       "collapsible": false,
@@ -781,7 +787,7 @@
                 },
                 {
                   "title": "%azure-sqlvm-vm-administrator-account-page-label%",
-                  "sections":[
+                  "sections": [
                     {
                       "title": "",
                       "collapsible": false,
