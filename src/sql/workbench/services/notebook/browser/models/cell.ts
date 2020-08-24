@@ -579,9 +579,22 @@ export class CellModel extends Disposable implements ICellModel {
 		if (output) {
 			// deletes transient node in the serialized JSON
 			delete output['transient'];
-			this._outputs.push(this.rewriteOutputUrls(output));
+			let tableExists = false;
+			if (output.output_type === 'execute_result') {
+				for (let i = 0; i < this._outputs.length; i++) {
+					let entry = this._outputs[i];
+					if (entry.result_batchId === output.result_batchId) {
+						this._outputs[i] = this.rewriteOutputUrls(output);
+						tableExists = true;
+						break;
+					}
+				}
+			}
+			if (!tableExists) {
+				this._outputs.push(this.rewriteOutputUrls(output));
+			}
 			// Only scroll on 1st output being added
-			let shouldScroll = this._outputs.length === 1;
+			let shouldScroll = this._outputs.length === 1 && !tableExists;
 			this.fireOutputsChanged(shouldScroll);
 		}
 	}

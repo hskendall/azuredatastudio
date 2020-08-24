@@ -354,6 +354,16 @@ class SqlKernel extends Disposable implements nb.IKernel {
 				this._future.handleBatchEnd(batch);
 			}
 		}));
+		this._register(queryRunner.onResultSet(batch => {
+			if (this._future) {
+				this._future.handleResultSet(batch);
+			}
+		}));
+		this._register(queryRunner.onResultSetUpdate(batch => {
+			if (this._future) {
+				this._future.handleResultSetUpdate(batch);
+			}
+		}));
 	}
 
 	private async queryComplete(): Promise<void> {
@@ -473,27 +483,43 @@ export class SQLFuture extends Disposable implements FutureInternal {
 		}
 	}
 
-	public handleBatchEnd(batch: BatchSummary): void {
+	public handleResultSet(resultSet: ResultSetSummary | ResultSetSummary[]) {
 		if (this.ioHandler) {
-			this._outputAddedPromises.push(this.processResultSets(batch));
+			this._outputAddedPromises.push(this.processResultSets(resultSet, false));
 		}
 	}
 
-	private async processResultSets(batch: BatchSummary): Promise<void> {
+	public handleResultSetUpdate(resultSet: ResultSetSummary | ResultSetSummary[]) {
+		if (this.ioHandler) {
+			this._outputAddedPromises.push(this.processResultSets(resultSet, true));
+		}
+	}
+
+	public handleBatchEnd(batch: BatchSummary): void {
+		// TODO: is there anything that needs to be done on batch end ?
+	}
+
+	private async processResultSets(resultSet: ResultSetSummary | ResultSetSummary[], update: boolean): Promise<void> {
 		try {
+			let resultsToUpdate: ResultSetSummary[];
+			if (!Array.isArray(resultSet)) {
+				resultsToUpdate = [resultSet];
+			} else {
+				resultsToUpdate = resultSet;
+			}
 			let queryRowsPromises: Promise<void>[] = [];
-			for (let resultSet of batch.resultSetSummaries) {
-				let rowCount = resultSet.rowCount > this.configuredMaxRows ? this.configuredMaxRows : resultSet.rowCount;
-				if (rowCount === this.configuredMaxRows) {
+			for (let set of resultsToUpdate) {
+				let rowCount = set.rowCount > this.configuredMaxRows ? this.configuredMaxRows : set.rowCount;
+				if (rowCount === this.configuredMaxRows && !update) {
 					this.handleMessage(localize('sqlMaxRowsDisplayed', "Displaying Top {0} rows.", rowCount));
 				}
-				queryRowsPromises.push(this.getAllQueryRows(rowCount, resultSet));
+				queryRowsPromises.push(this.getAllQueryRows(rowCount, set));
 			}
 			// We want to display table in the same order
 			let i = 0;
-			for (let resultSet of batch.resultSetSummaries) {
+			for (let set of resultsToUpdate) {
 				await queryRowsPromises[i];
-				this.sendResultSetAsIOPub(resultSet);
+				this.sendResultSetAsIOPub(set);
 				i++;
 			}
 		} catch (err) {
@@ -536,7 +562,9 @@ export class SQLFuture extends Disposable implements FutureInternal {
 			},
 			content: <nb.IExecuteResult>{
 				output_type: 'execute_result',
-				metadata: {},
+				metadata: {
+					result_batchId: resultSet.batchId
+				},
 				execution_count: this._executionCount,
 				data: {
 					'application/vnd.dataresource+json': this.convertToDataResource(resultSet.columnInfo, subsetResult),
