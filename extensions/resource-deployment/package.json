@@ -437,7 +437,7 @@
                   "title": "",
                   "sections": [
                     {
-                      "title": "Azure information",
+                      "title": "%azure-sqlvm-azure-account-page-label%",
                       "fields": [
                         {
                           "subscriptionVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_NB_VAR_SUBSCRIPTION",
@@ -447,7 +447,7 @@
                         },
                         {
                           "type": "azure_locations",
-                          "label": "Azure Locations",
+                          "label": "%azure-sqlvm-azure-location-label%",
                           "defaultValue": "eastus",
                           "required": true,
                           "locationVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_LOCATION",
@@ -481,6 +481,16 @@
                           "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
                           "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
                           "defaultValue": "mysqlserver",
+                          "required": true
+                        },
+                        {
+                          "label": "SQL Server Admin Username",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_SERVER_USERNAME",
+                          "type": "text",
+                          "textValidationRequired": true,
+                          "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
+                          "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
+                          "defaultValue": "",
                           "required": true
                         },
                         {
@@ -571,7 +581,7 @@
               "generateSummaryPage": true,
               "pages": [
                 {
-                  "title": "%azure-sqlvm-azure-account-page-label%",
+                  "title": ,
                   "sections":
                   [
                     {

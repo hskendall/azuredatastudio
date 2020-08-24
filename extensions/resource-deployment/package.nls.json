@@ -81,6 +81,8 @@
 	"azure-sqldb-display-name": "Azure SQL databases",
 	"azure-sqldb-description": "Best for new applications or existing on-premises applications that want to use the latest stable SQL Server features and that are migrated to the cloud with minimal changes.",
 	"azure-sqldb-deploy-dialog-title": "Deploy Azure SQL database",
+	"azure-sqldb-username-label": "Username",
+	"azure-sqldb-password-label": "Password",
 	"azure-sqldb-agreement-sqldb-eula": "Azure SQL DB License Terms",
 	"resource-type-display-name": "Resource Type",
 	"sql-azure-single-database-display-name": "Single Database",
