@@ -512,36 +512,43 @@
                   ]
                 },
                 {
-                  "title": "SQL Database information",
-                  "fields": [
+                  "title": "%azure-sqldb-database-information-page-label%",
+                  "sections": [
                     {
-                      "label": "Database Name",
-                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
-                      "type": "text",
-                      "textValidationRequired": true,
-                      "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
-                      "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
-                      "defaultValue": "",
-                      "required": true
-                    }
-                  ]
-                },
-                {
-                  "title": "The ip address range that you want to allow to access your server",
-                  "fields": [
-                    {
-                      "label": "Start IP Address",
-                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_START",
-                      "type": "text",
-                      "defaultValue": "0.0.0.0",
-                      "required": true
+                      "title": "",
+                      "collapsible": false,
+                      "fields": [
+                        {
+                          "label": "%azure-sqldb-database-name-label%",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_DATABASE_NAME",
+                          "type": "text",
+                          "textValidationRequired": true,
+                          "textValidationRegex": "^[a-z0-9]([-a-z0-9_-]{0,13}[a-z0-9])?$",
+                          "textValidationDescription": "%azure-sqlvm-vm-azure-resource-name-validation-description%",
+                          "defaultValue": "",
+                          "required": true
+                        }
+                      ]
                     },
                     {
-                      "label": "End IP Address",
-                      "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_END",
-                      "type": "text",
-                      "defaultValue": "0.0.0.0",
-                      "required": true
+                      "title": "",
+                      "collapsible": false,
+                      "fields": [
+                        {
+                          "label": "%azure-sqldb-start-ip-label%",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_START",
+                          "type": "text",
+                          "defaultValue": "0.0.0.0",
+                          "required": true
+                        },
+                        {
+                          "label": "azure-sqldb-end-ip-label",
+                          "variableName": "AZDATA_NB_VAR_AZURE_SQLDB_IP_END",
+                          "type": "text",
+                          "defaultValue": "0.0.0.0",
+                          "required": true
+                        }
+                      ]
                     }
                   ]
                 }
