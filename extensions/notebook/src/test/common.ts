@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { IServerInstance } from '../jupyter/common';
 import { Session, Kernel, KernelMessage, ServerConnection } from '@jupyterlab/services';
 import { ISignal } from '@phosphor/signaling';
+import { JSONObject } from '@phosphor/coreutils';
 
 export class JupyterServerInstanceStub implements IServerInstance {
 	public get port(): string {
@@ -104,6 +105,12 @@ export class SessionStub implements Session.ISession {
 }
 
 export class KernelStub implements Kernel.IKernel {
+	sendShellMessage<T extends KernelMessage.ShellMessageType>(msg: KernelMessage.IShellMessage<T>, expectReply?: boolean, disposeOnDone?: boolean): Kernel.IFuture<KernelMessage.IShellMessage<T>, KernelMessage.IShellMessage<KernelMessage.ShellMessageType>> {
+		throw new Error('Method not implemented.');
+	}
+	requestExecute(content: KernelMessage.IExecuteRequest, disposeOnDone?: boolean, metadata?: JSONObject): Kernel.IFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg> {
+		throw new Error('Method not implemented.');
+	}
 	get terminated(): ISignal<this, void> {
 		throw new Error('Method not implemented.');
 	}
@@ -158,9 +165,9 @@ export class KernelStub implements Kernel.IKernel {
 	getSpec(): Promise<Kernel.ISpecModel> {
 		throw new Error('Method not implemented.');
 	}
-	sendShellMessage(msg: KernelMessage.IShellMessage, expectReply?: boolean, disposeOnDone?: boolean): Kernel.IFuture {
-		throw new Error('Method not implemented.');
-	}
+	// sendShellMessage(msg: KernelMessage.IShellMessage, expectReply?: boolean, disposeOnDone?: boolean): Kernel.IFuture {
+	// 	throw new Error('Method not implemented.');
+	// }
 	reconnect(): Promise<void> {
 		throw new Error('Method not implemented.');
 	}
@@ -182,9 +189,9 @@ export class KernelStub implements Kernel.IKernel {
 	requestHistory(content: KernelMessage.IHistoryRequest): Promise<KernelMessage.IHistoryReplyMsg> {
 		throw new Error('Method not implemented.');
 	}
-	requestExecute(content: KernelMessage.IExecuteRequest, disposeOnDone?: boolean): Kernel.IFuture {
-		throw new Error('Method not implemented.');
-	}
+	// requestExecute(content: KernelMessage.IExecuteRequest, disposeOnDone?: boolean): Kernel.IFuture {
+	// 	throw new Error('Method not implemented.');
+	// }
 	requestIsComplete(content: KernelMessage.IIsCompleteRequest): Promise<KernelMessage.IIsCompleteReplyMsg> {
 		throw new Error('Method not implemented.');
 	}

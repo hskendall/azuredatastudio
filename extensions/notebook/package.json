@@ -562,13 +562,12 @@
     }
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^2.0.1",
+    "@jupyter-widgets/base": "^1.2.0",
     "@jupyter-widgets/controls": "^1.5.2",
     "@jupyter-widgets/html-manager": "^0.19.0",
-    "@jupyter-widgets/jupyterlab-manager": "^1.0.2",
     "@jupyterlab/docregistry": "^1.2.2",
     "@jupyterlab/apputils": "^1.2.2",
-    "@jupyterlab/services": "^4.2.0",
+    "@jupyterlab/services": "^1.0.1 || ^2.0.0 || ^3.0.0 || 4.0.0-alpha.3 || 4.0.0-alpha.6 || 4.0.0-alpha.8",
     "@phosphor/widgets": "^1.9.3",
     "@types/adm-zip": "^0.4.32",
     "@types/tar": "^4.0.3",

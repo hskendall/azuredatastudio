@@ -5,6 +5,7 @@
 
 import { nb } from 'azdata';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
+import { WidgetManager } from '../ipythonWidgets/widgetManager';
 
 function toShellMessage(msgImpl: KernelMessage.IShellMessage): nb.IShellMessage {
 	return {
@@ -46,6 +47,7 @@ function toIInputReply(content: nb.IInputReply): KernelMessage.IInputReply {
 }
 export class JupyterKernel implements nb.IKernel {
 	constructor(private kernelImpl: Kernel.IKernelConnection) {
+		let widgetManager = new WidgetManager(this.kernelImpl);
 	}
 
 	public get id(): string {
@@ -153,7 +155,7 @@ export class JupyterFuture implements nb.IFuture {
 	}
 
 	setIOPubHandler(handler: nb.MessageHandler<nb.IIOPubMessage>): void {
-		this.futureImpl.onIOPub = (msg) => {
+		this.futureImpl.onIOPub = async (msg) => {
 			let shellMsg = toIOPubMessage(msg);
 			return handler.handle(shellMsg);
 		};

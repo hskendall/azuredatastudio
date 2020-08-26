@@ -3,32 +3,24 @@
  *  Licensed under the Source EULA. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { shims } from '@jupyter-widgets/base';
+import * as base from '@jupyter-widgets/base';
 
 import { Kernel } from '@jupyterlab/services';
-import * as jupyterlab from '@jupyter-widgets/jupyterlab-manager';
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
-import { DocumentContext } from './documentContext';
 
-export class WidgetManager extends jupyterlab.WidgetManager {
+import { HTMLManager } from '@jupyter-widgets/html-manager';
 
-	public kernel: Kernel.IKernelConnection;
-	public el: HTMLElement;
+import './widgets.css';
 
-	constructor(kernel: Kernel.IKernelConnection, el: HTMLElement) {
-		super(new DocumentContext(kernel),
-			new RenderMimeRegistry({
-				initialFactories: standardRendererFactories
-			}),
-			{ saveState: false });
+export class WidgetManager extends HTMLManager {
+	constructor(kernel: Kernel.IKernelConnection) {
+		super();
 		this.kernel = kernel;
 
 		kernel.registerCommTarget(this.comm_target_name, async (comm, msg) => {
-			const oldComm = new shims.services.Comm(comm);
+			const oldComm = new base.shims.services.Comm(comm);
 			await this.handle_comm_open(oldComm, msg);
 		});
 	}
-
 
 	/**
 	 * Create a comm.
@@ -38,12 +30,12 @@ export class WidgetManager extends jupyterlab.WidgetManager {
 		model_id: string,
 		data?: any,
 		metadata?: any
-	): Promise<shims.services.Comm> {
+	): Promise<base.shims.services.Comm> {
 		const comm = this.kernel.connectToComm(target_name, model_id);
 		if (data || metadata) {
 			comm.open(data, metadata);
 		}
-		return Promise.resolve(new shims.services.Comm(comm));
+		return Promise.resolve(new base.shims.services.Comm(comm));
 	}
 
 	/**
@@ -51,8 +43,9 @@ export class WidgetManager extends jupyterlab.WidgetManager {
 	 */
 	_get_comm_info(): Promise<any> {
 		return this.kernel
-			.requestCommInfo({ target_name: this.comm_target_name })
+			.requestCommInfo({ target: this.comm_target_name })
 			.then((reply: { content: any; }) => (reply.content as any).comms);
 	}
 
+	kernel: Kernel.IKernelConnection;
 }
