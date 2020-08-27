@@ -55,7 +55,7 @@ export class CodeCellComponent extends CellView implements OnInit, OnChanges {
 			this._register(this.cellModel.onCollapseStateChanged((state) => {
 				this._changeRef.detectChanges();
 			}));
-			this._register(this.cellModel.onOutputsChanged(() => {
+			this._register(this.cellModel.initOutputArea((e) => {
 				this._changeRef.detectChanges();
 			}));
 			// Register request handler, cleanup on dispose of this component

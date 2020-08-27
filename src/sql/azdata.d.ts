@@ -4699,7 +4699,7 @@ declare module 'azdata' {
 			metadata?: {
 				azdata_chartOptions?: any;
 			};
-			result_batchId?: number;
+			id?: number;
 		}
 
 		/**

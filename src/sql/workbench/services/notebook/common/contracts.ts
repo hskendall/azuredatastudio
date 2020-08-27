@@ -27,6 +27,12 @@ export type OutputType =
 	| 'error'
 	| 'update_display_data';
 
+export enum OutputChangeType {
+	Add,
+	Update,
+	Clear
+}
+
 export class OutputTypes {
 	public static readonly ExecuteResult = 'execute_result';
 	public static readonly DisplayData = 'display_data';

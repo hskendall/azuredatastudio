@@ -11,6 +11,7 @@ import * as themeColors from 'vs/workbench/common/theme';
 import { IWorkbenchThemeService } from 'vs/workbench/services/themes/common/workbenchThemeService';
 import { URI } from 'vs/base/common/uri';
 import { IColorTheme } from 'vs/platform/theme/common/themeService';
+import { OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 
 export const OUTPUT_AREA_SELECTOR: string = 'output-area-component';
 
@@ -35,11 +36,15 @@ export class OutputAreaComponent extends AngularDisposable implements OnInit {
 		this._register(this.themeService.onDidColorThemeChange(this.updateTheme, this));
 		this.updateTheme(this.themeService.getColorTheme());
 		if (this.cellModel) {
-			this._register(this.cellModel.onOutputsChanged(e => {
+			this._register(this.cellModel.onOutputsChanged((e) => {
 				if (!(this._changeRef['destroyed'])) {
-					this._changeRef.detectChanges();
-					if (e && e.shouldScroll) {
-						this.setFocusAndScroll(this.outputArea.nativeElement);
+					if (e.changeType === OutputChangeType.Clear) {
+						this._changeRef.detectChanges();
+					} else if (e.changeType === OutputChangeType.Add) {
+						this._changeRef.detectChanges();
+						if (e.shouldScroll) {
+							this.setFocusAndScroll(this.outputArea.nativeElement);
+						}
 					}
 				}
 			}));

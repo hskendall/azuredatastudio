@@ -10,7 +10,7 @@ import { URI } from 'vs/base/common/uri';
 import { localize } from 'vs/nls';
 
 import * as notebookUtils from 'sql/workbench/services/notebook/browser/models/notebookUtils';
-import { CellTypes, CellType, NotebookChangeType } from 'sql/workbench/services/notebook/common/contracts';
+import { CellTypes, CellType, NotebookChangeType, OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 import { NotebookModel } from 'sql/workbench/services/notebook/browser/models/notebookModel';
 import { ICellModel, IOutputChangedEvent, CellExecutionState, ICellModelOptions } from 'sql/workbench/services/notebook/browser/models/modelInterfaces';
 import { IConnectionManagementService } from 'sql/platform/connection/common/connectionManagement';
@@ -44,6 +44,7 @@ export class CellModel extends Disposable implements ICellModel {
 	private _outputs: nb.ICellOutput[] = [];
 	private _renderedOutputTextContent: string[] = [];
 	private _isEditMode: boolean;
+	private _initOutputArea = new Emitter<IOutputChangedEvent>();
 	private _onOutputsChanged = new Emitter<IOutputChangedEvent>();
 	private _onCellModeChanged = new Emitter<boolean>();
 	private _onExecutionStateChanged = new Emitter<CellExecutionState>();
@@ -64,6 +65,7 @@ export class CellModel extends Disposable implements ICellModel {
 	private _showPreview: boolean = true;
 	private _onCellPreviewChanged = new Emitter<boolean>();
 	private _isCommandExecutionSettingEnabled: boolean = false;
+	private _outputAreaInitialized: boolean = false;;
 
 	constructor(cellData: nb.ICellContents,
 		private _options: ICellModelOptions,
@@ -108,6 +110,10 @@ export class CellModel extends Disposable implements ICellModel {
 
 	public get onCollapseStateChanged(): Event<boolean> {
 		return this._onCollapseStateChanged.event;
+	}
+
+	public get initOutputArea(): Event<IOutputChangedEvent> {
+		return this._initOutputArea.event;
 	}
 
 	public get onOutputsChanged(): Event<IOutputChangedEvent> {
@@ -175,6 +181,7 @@ export class CellModel extends Disposable implements ICellModel {
 		if (this._isTrusted !== isTrusted) {
 			this._isTrusted = isTrusted;
 			let outputEvent: IOutputChangedEvent = {
+				changeType: OutputChangeType.Update,
 				outputs: this._outputs,
 				shouldScroll: false
 			};
@@ -495,22 +502,28 @@ export class CellModel extends Disposable implements ICellModel {
 
 	public clearOutputs(): void {
 		this._outputs = [];
-		this.fireOutputsChanged();
+		this.fireOutputsChanged(OutputChangeType.Clear);
 
 		this.executionCount = undefined;
 	}
 
-	private fireOutputsChanged(shouldScroll: boolean = false): void {
+	private fireOutputsChanged(changeType: OutputChangeType, shouldScroll: boolean = false): void {
 		let outputEvent: IOutputChangedEvent = {
+			changeType: changeType,
 			outputs: this.outputs,
 			shouldScroll: !!shouldScroll
 		};
-		this._onOutputsChanged.fire(outputEvent);
-		if (this.outputs.length !== 0) {
-			this.sendChangeToNotebook(NotebookChangeType.CellOutputUpdated);
+		if (!this._outputAreaInitialized) {
+			this._initOutputArea.fire(outputEvent);
+			this._outputAreaInitialized = true;
 		} else {
-			this.sendChangeToNotebook(NotebookChangeType.CellOutputCleared);
+			this._onOutputsChanged.fire(outputEvent);
 		}
+		// if (this.outputs.length !== 0) {
+		// 	this.sendChangeToNotebook(NotebookChangeType.CellOutputUpdated);
+		// } else {
+		// 	this.sendChangeToNotebook(NotebookChangeType.CellOutputCleared);
+		// }
 	}
 
 	public sendChangeToNotebook(change: NotebookChangeType): void {
@@ -579,23 +592,36 @@ export class CellModel extends Disposable implements ICellModel {
 		if (output) {
 			// deletes transient node in the serialized JSON
 			delete output['transient'];
-			let tableExists = false;
+			let outputExists = false;
 			if (output.output_type === 'execute_result') {
 				for (let i = 0; i < this._outputs.length; i++) {
 					let entry = this._outputs[i];
-					if (entry.result_batchId === output.result_batchId) {
+					if (entry.id === output.id) {
 						this._outputs[i] = this.rewriteOutputUrls(output);
-						tableExists = true;
+						outputExists = true;
 						break;
 					}
 				}
 			}
-			if (!tableExists) {
+			// if (output.output_type === 'display_data') {
+			// 	let outputResult = output as nb.IDisplayResult;
+			// 	for (let i = 0; i < this._outputs.length; i++) {
+			// 		let entry = this._outputs[i];
+			// 		if (entry.output_type === 'display_data') {
+			// 			let result = entry as nb.IDisplayResult;
+			// 			result.data['text/html'] += '\n' + outputResult.data['text/html'];
+			// 			outputExists = true;
+			// 		}
+			// 	}
+			// }
+			if (!outputExists) {
 				this._outputs.push(this.rewriteOutputUrls(output));
+				// Only scroll on 1st output being added
+				let shouldScroll = this._outputs.length === 1 && !outputExists;
+				this.fireOutputsChanged(OutputChangeType.Add, shouldScroll);
+			} else {
+				this.fireOutputsChanged(OutputChangeType.Update);
 			}
-			// Only scroll on 1st output being added
-			let shouldScroll = this._outputs.length === 1 && !tableExists;
-			this.fireOutputsChanged(shouldScroll);
 		}
 	}
 

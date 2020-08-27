@@ -21,6 +21,7 @@ import { localize } from 'vs/nls';
 import * as types from 'vs/base/common/types';
 import { getErrorMessage } from 'vs/base/common/errors';
 import { CellView } from 'sql/workbench/contrib/notebook/browser/cellViews/interfaces';
+import { OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 
 export const OUTPUT_SELECTOR: string = 'output-component';
 const USER_SELECT_CLASS = 'actionselect';
@@ -59,6 +60,11 @@ export class OutputComponent extends CellView implements OnInit, AfterViewInit {
 		this._initialized = true;
 		this._register(Event.debounce(this.cellModel.notebookModel.layoutChanged, (l, e) => e, 50, /*leading=*/false)
 			(() => this.layout()));
+		this._register(this.cellModel.onOutputsChanged((e) => {
+			if (e.changeType === OutputChangeType.Update) {
+				this._changeref.detectChanges();
+			}
+		}));
 	}
 
 	ngAfterViewInit() {

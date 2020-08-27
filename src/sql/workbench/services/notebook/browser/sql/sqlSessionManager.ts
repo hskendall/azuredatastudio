@@ -6,7 +6,7 @@
 import { nb, IResultMessage } from 'azdata';
 import { localize } from 'vs/nls';
 import QueryRunner from 'sql/workbench/services/query/common/queryRunner';
-import { BatchSummary, ResultSetSummary, IColumn, ResultSetSubset } from 'sql/workbench/services/query/common/query';
+import { ResultSetSummary, IColumn, ResultSetSubset } from 'sql/workbench/services/query/common/query';
 import { IConnectionManagementService } from 'sql/platform/connection/common/connectionManagement';
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import Severity from 'vs/base/common/severity';
@@ -349,11 +349,6 @@ class SqlKernel extends Disposable implements nb.IKernel {
 				}
 			}
 		}));
-		this._register(queryRunner.onBatchEnd(batch => {
-			if (this._future) {
-				this._future.handleBatchEnd(batch);
-			}
-		}));
 		this._register(queryRunner.onResultSet(batch => {
 			if (this._future) {
 				this._future.handleResultSet(batch);
@@ -485,21 +480,17 @@ export class SQLFuture extends Disposable implements FutureInternal {
 
 	public handleResultSet(resultSet: ResultSetSummary | ResultSetSummary[]) {
 		if (this.ioHandler) {
-			this._outputAddedPromises.push(this.processResultSets(resultSet, false));
+			this._outputAddedPromises.push(this.processResultSets(resultSet));
 		}
 	}
 
 	public handleResultSetUpdate(resultSet: ResultSetSummary | ResultSetSummary[]) {
 		if (this.ioHandler) {
-			this._outputAddedPromises.push(this.processResultSets(resultSet, true));
+			this._outputAddedPromises.push(this.processResultSets(resultSet));
 		}
 	}
 
-	public handleBatchEnd(batch: BatchSummary): void {
-		// TODO: is there anything that needs to be done on batch end ?
-	}
-
-	private async processResultSets(resultSet: ResultSetSummary | ResultSetSummary[], update: boolean): Promise<void> {
+	private async processResultSets(resultSet: ResultSetSummary | ResultSetSummary[]): Promise<void> {
 		try {
 			let resultsToUpdate: ResultSetSummary[];
 			if (!Array.isArray(resultSet)) {
@@ -510,9 +501,9 @@ export class SQLFuture extends Disposable implements FutureInternal {
 			let queryRowsPromises: Promise<void>[] = [];
 			for (let set of resultsToUpdate) {
 				let rowCount = set.rowCount > this.configuredMaxRows ? this.configuredMaxRows : set.rowCount;
-				if (rowCount === this.configuredMaxRows && !update) {
-					this.handleMessage(localize('sqlMaxRowsDisplayed', "Displaying Top {0} rows.", rowCount));
-				}
+				// if (rowCount === this.configuredMaxRows) {
+				// 	this.handleMessage(localize('sqlMaxRowsDisplayed', "Displaying Top {0} rows.", rowCount));
+				// }
 				queryRowsPromises.push(this.getAllQueryRows(rowCount, set));
 			}
 			// We want to display table in the same order
@@ -562,14 +553,13 @@ export class SQLFuture extends Disposable implements FutureInternal {
 			},
 			content: <nb.IExecuteResult>{
 				output_type: 'execute_result',
-				metadata: {
-					result_batchId: resultSet.batchId
-				},
+				metadata: {},
 				execution_count: this._executionCount,
 				data: {
 					'application/vnd.dataresource+json': this.convertToDataResource(resultSet.columnInfo, subsetResult),
 					'text/html': this.convertToHtmlTable(resultSet.columnInfo, subsetResult)
-				}
+				},
+				id: resultSet.id
 			},
 			metadata: undefined,
 			parent_header: undefined

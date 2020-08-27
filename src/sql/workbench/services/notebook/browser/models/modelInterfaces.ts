@@ -11,7 +11,7 @@ import { IDisposable } from 'vs/base/common/lifecycle';
 import { URI } from 'vs/base/common/uri';
 import { INotificationService } from 'vs/platform/notification/common/notification';
 
-import { CellType, NotebookChangeType } from 'sql/workbench/services/notebook/common/contracts';
+import { CellType, NotebookChangeType, OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 import { INotebookManager, ILanguageMagic } from 'sql/workbench/services/notebook/browser/notebookService';
 import { IConnectionProfile } from 'sql/platform/connection/common/interfaces';
 import { IConnectionManagementService } from 'sql/platform/connection/common/connectionManagement';
@@ -441,6 +441,7 @@ export enum MoveDirection {
 }
 
 export interface IOutputChangedEvent {
+	changeType: OutputChangeType,
 	outputs: ReadonlyArray<nb.ICellOutput>;
 	shouldScroll: boolean;
 }
@@ -459,6 +460,7 @@ export interface ICellModel {
 	readonly future: FutureInternal;
 	readonly outputs: ReadonlyArray<nb.ICellOutput>;
 	renderedOutputTextContent?: string[];
+	readonly initOutputArea: Event<IOutputChangedEvent>;
 	readonly onOutputsChanged: Event<IOutputChangedEvent>;
 	readonly onExecutionStateChange: Event<CellExecutionState>;
 	readonly executionState: CellExecutionState;
