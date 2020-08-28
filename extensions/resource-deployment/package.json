@@ -448,7 +448,7 @@
                         },
                         {
                           "type": "azure_locations",
-                          "label": "azure-sqlvm-azure-location-label%",
+                          "label": "%azure-sqlvm-azure-location-label%",
                           "defaultValue": "eastus",
                           "required": true,
                           "locationVariableName": "AZDATA_NB_VAR_AZURE_SQLDB_LOCATION",
