@@ -21,7 +21,6 @@ import { localize } from 'vs/nls';
 import * as types from 'vs/base/common/types';
 import { getErrorMessage } from 'vs/base/common/errors';
 import { CellView } from 'sql/workbench/contrib/notebook/browser/cellViews/interfaces';
-import { OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 
 export const OUTPUT_SELECTOR: string = 'output-component';
 const USER_SELECT_CLASS = 'actionselect';
@@ -46,7 +45,7 @@ export class OutputComponent extends CellView implements OnInit, AfterViewInit {
 
 	constructor(
 		@Inject(IThemeService) private _themeService: IThemeService,
-		@Inject(forwardRef(() => ChangeDetectorRef)) private _changeref: ChangeDetectorRef,
+		@Inject(forwardRef(() => ChangeDetectorRef)) private _changeRef: ChangeDetectorRef,
 		@Inject(forwardRef(() => ElementRef)) private _ref: ElementRef,
 		@Inject(forwardRef(() => ComponentFactoryResolver)) private _componentFactoryResolver: ComponentFactoryResolver
 	) {
@@ -60,11 +59,6 @@ export class OutputComponent extends CellView implements OnInit, AfterViewInit {
 		this._initialized = true;
 		this._register(Event.debounce(this.cellModel.notebookModel.layoutChanged, (l, e) => e, 50, /*leading=*/false)
 			(() => this.layout()));
-		this._register(this.cellModel.onOutputsChanged((e) => {
-			if (e.changeType === OutputChangeType.Update) {
-				this._changeref.detectChanges();
-			}
-		}));
 	}
 
 	ngAfterViewInit() {
@@ -180,7 +174,7 @@ export class OutputComponent extends CellView implements OnInit, AfterViewInit {
 			this._componentInstance.cellModel = this.cellModel;
 			this._componentInstance.cellOutput = this.cellOutput;
 			this._componentInstance.bundleOptions = options;
-			this._changeref.detectChanges();
+			this._changeRef.detectChanges();
 			let el = <HTMLElement>componentRef.location.nativeElement;
 
 			// set widget styles to conform to its box

@@ -29,6 +29,7 @@ import { ICommandService } from 'vs/platform/commands/common/commands';
 import { tryMatchCellMagic, extractCellMagicCommandPlusArgs } from 'sql/workbench/services/notebook/browser/utils';
 import { IConfigurationService } from 'vs/platform/configuration/common/configuration';
 import { Disposable } from 'vs/base/common/lifecycle';
+import { ResultSetSummary } from 'sql/workbench/services/query/common/query';
 
 let modelId = 0;
 const ads_execute_command = 'ads_execute_command';
@@ -507,11 +508,12 @@ export class CellModel extends Disposable implements ICellModel {
 		this.executionCount = undefined;
 	}
 
-	private fireOutputsChanged(changeType: OutputChangeType, shouldScroll: boolean = false): void {
+	private fireOutputsChanged(changeType: OutputChangeType, shouldScroll: boolean = false, resultSetSummary?: ResultSetSummary): void {
 		let outputEvent: IOutputChangedEvent = {
 			changeType: changeType,
 			outputs: this.outputs,
-			shouldScroll: !!shouldScroll
+			shouldScroll: !!shouldScroll,
+			resultSetSummary: resultSetSummary
 		};
 		if (!this._outputAreaInitialized) {
 			this._initOutputArea.fire(outputEvent);
@@ -519,11 +521,6 @@ export class CellModel extends Disposable implements ICellModel {
 		} else {
 			this._onOutputsChanged.fire(outputEvent);
 		}
-		// if (this.outputs.length !== 0) {
-		// 	this.sendChangeToNotebook(NotebookChangeType.CellOutputUpdated);
-		// } else {
-		// 	this.sendChangeToNotebook(NotebookChangeType.CellOutputCleared);
-		// }
 	}
 
 	public sendChangeToNotebook(change: NotebookChangeType): void {
@@ -596,31 +593,20 @@ export class CellModel extends Disposable implements ICellModel {
 			if (output.output_type === 'execute_result') {
 				for (let i = 0; i < this._outputs.length; i++) {
 					let entry = this._outputs[i];
-					if (entry.id === output.id) {
+					if (entry.resultSet.id === output.resultSet.id) {
 						this._outputs[i] = this.rewriteOutputUrls(output);
 						outputExists = true;
 						break;
 					}
 				}
 			}
-			// if (output.output_type === 'display_data') {
-			// 	let outputResult = output as nb.IDisplayResult;
-			// 	for (let i = 0; i < this._outputs.length; i++) {
-			// 		let entry = this._outputs[i];
-			// 		if (entry.output_type === 'display_data') {
-			// 			let result = entry as nb.IDisplayResult;
-			// 			result.data['text/html'] += '\n' + outputResult.data['text/html'];
-			// 			outputExists = true;
-			// 		}
-			// 	}
-			// }
 			if (!outputExists) {
 				this._outputs.push(this.rewriteOutputUrls(output));
 				// Only scroll on 1st output being added
 				let shouldScroll = this._outputs.length === 1 && !outputExists;
 				this.fireOutputsChanged(OutputChangeType.Add, shouldScroll);
 			} else {
-				this.fireOutputsChanged(OutputChangeType.Update);
+				this.fireOutputsChanged(OutputChangeType.Update, false, output.resultSet);
 			}
 		}
 	}

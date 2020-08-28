@@ -4699,7 +4699,7 @@ declare module 'azdata' {
 			metadata?: {
 				azdata_chartOptions?: any;
 			};
-			id?: number;
+			resultSet?: any;
 		}
 
 		/**
@@ -5228,6 +5228,7 @@ declare module 'azdata' {
 		 */
 		export interface IIOPubMessage extends IMessage {
 			channel: 'iopub';
+			resultSet?: any;
 		}
 
 		/**

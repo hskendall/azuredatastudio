@@ -444,6 +444,7 @@ export interface IOutputChangedEvent {
 	changeType: OutputChangeType,
 	outputs: ReadonlyArray<nb.ICellOutput>;
 	shouldScroll: boolean;
+	resultSetSummary?: any;
 }
 
 export interface ICellModel {

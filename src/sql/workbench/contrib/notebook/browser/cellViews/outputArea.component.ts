@@ -36,11 +36,9 @@ export class OutputAreaComponent extends AngularDisposable implements OnInit {
 		this._register(this.themeService.onDidColorThemeChange(this.updateTheme, this));
 		this.updateTheme(this.themeService.getColorTheme());
 		if (this.cellModel) {
-			this._register(this.cellModel.onOutputsChanged((e) => {
+			this._register(this.cellModel.onOutputsChanged(e => {
 				if (!(this._changeRef['destroyed'])) {
-					if (e.changeType === OutputChangeType.Clear) {
-						this._changeRef.detectChanges();
-					} else if (e.changeType === OutputChangeType.Add) {
+					if (e.changeType === OutputChangeType.Clear || e.changeType === OutputChangeType.Add) {
 						this._changeRef.detectChanges();
 						if (e.shouldScroll) {
 							this.setFocusAndScroll(this.outputArea.nativeElement);

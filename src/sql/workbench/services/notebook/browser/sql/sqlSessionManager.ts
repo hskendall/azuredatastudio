@@ -501,16 +501,18 @@ export class SQLFuture extends Disposable implements FutureInternal {
 			let queryRowsPromises: Promise<void>[] = [];
 			for (let set of resultsToUpdate) {
 				let rowCount = set.rowCount > this.configuredMaxRows ? this.configuredMaxRows : set.rowCount;
-				// if (rowCount === this.configuredMaxRows) {
-				// 	this.handleMessage(localize('sqlMaxRowsDisplayed', "Displaying Top {0} rows.", rowCount));
-				// }
+				if (rowCount === this.configuredMaxRows && set.complete) {
+					this.handleMessage(localize('sqlMaxRowsDisplayed', "Displaying Top {0} rows.", rowCount));
+				}
 				queryRowsPromises.push(this.getAllQueryRows(rowCount, set));
 			}
 			// We want to display table in the same order
 			let i = 0;
 			for (let set of resultsToUpdate) {
 				await queryRowsPromises[i];
-				this.sendResultSetAsIOPub(set);
+				if (set.rowCount < this.configuredMaxRows) {
+					this.sendResultSetAsIOPub(set);
+				}
 				i++;
 			}
 		} catch (err) {
@@ -559,7 +561,7 @@ export class SQLFuture extends Disposable implements FutureInternal {
 					'application/vnd.dataresource+json': this.convertToDataResource(resultSet.columnInfo, subsetResult),
 					'text/html': this.convertToHtmlTable(resultSet.columnInfo, subsetResult)
 				},
-				id: resultSet.id
+				resultSet: resultSet
 			},
 			metadata: undefined,
 			parent_header: undefined

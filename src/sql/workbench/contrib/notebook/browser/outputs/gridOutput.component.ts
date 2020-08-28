@@ -37,7 +37,7 @@ import { IUntitledTextEditorService } from 'vs/workbench/services/untitled/commo
 import { ChartView } from 'sql/workbench/contrib/charts/browser/chartView';
 import { ToggleableAction } from 'sql/workbench/contrib/notebook/browser/notebookActions';
 import { IInsightOptions } from 'sql/workbench/common/editor/query/chartState';
-import { NotebookChangeType } from 'sql/workbench/services/notebook/common/contracts';
+import { NotebookChangeType, OutputChangeType } from 'sql/workbench/services/notebook/common/contracts';
 import { URI } from 'vs/base/common/uri';
 
 @Component({
@@ -105,6 +105,14 @@ export class GridOutputComponent extends AngularDisposable implements IMimeCompo
 			let outputElement = <HTMLElement>this.output.nativeElement;
 			outputElement.appendChild(this._table.element);
 			this._register(attachTableStyler(this._table, this.themeService));
+			this._register(this.cellModel.onOutputsChanged(e => {
+				if (e.changeType === OutputChangeType.Update && e.resultSetSummary) {
+					let resultSet = e.resultSetSummary as ResultSetSummary;
+					if (resultSet.id === this._cellOutput.resultSet.id) {
+						this._table.updateResult(resultSet);
+					}
+				}
+			}));
 			this._table.onDidInsert();
 			this.layout();
 			this._initialized = true;
